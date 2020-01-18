@@ -1,0 +1,21 @@
+title Scale From 0: Medium Altitude View
+
+User->Activator: Request
+alt Not yet activating?
+  Activator->Autoscaler: Poke
+end
+note left of Activator: If already activating,\njust increment the counter\nof requests in queue
+Autoscaler->Autoscaler: ComputeScale
+Autoscaler->KPA: Decider{Scale:x}
+KPA->Deployment: SetScale(x)
+Deployment->Deployment: Create X pods
+
+
+loop WaitForCapacity
+    Activator-->>Activator: WatchEndpoints
+end
+Deployment-->Activator: EndpointsNotify
+Activator->Pod: ProxyRequest
+Pod-->Activator: Response
+Activator-->User: ProxyResponse
+

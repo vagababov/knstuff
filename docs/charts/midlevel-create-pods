@@ -1,0 +1,15 @@
+title Mid-Level Create X Pods
+
+Deployment->ReplicaController: CreatePods(num: X, spec: podpec)
+loop for i in range(0, x)
+  ReplicaController->API Server: CreatePod(podspec)
+  API Server->API Server: CreatePod
+  note right of API Server: This hides etcd\ninteractions.
+  Scheduler->Scheduler: node := SchedulePod()
+  note left of API Server: If there's no capacity, then lower priority\npods will be evicted or node scaler\nwill allocate a new node, if possible.\nIf nothing works, the pod will never schedule.
+  API Server->Kubelet: CreatePod(podspec)
+  Kubelet->Docker: Run()
+  Docker-->Docker: FetchImage()
+  Docker-->Docker: RunImage()
+end
+
