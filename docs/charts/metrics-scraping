@@ -1,0 +1,24 @@
+title: Metric Scraping
+
+KPA->KPA: Reconcile
+KPA->KPA: ReconcileMetric
+note left of Metrics: API server interaction\nis ignored here.
+KPA->Metrics: Create/Update(metric)
+
+Metrics->+Metrics: reconcileCollection
+Metrics->MetricsCollector: CreateOrUpdate(metric)
+
+alt New?
+    MetricsCollector->*+Collection: Create(metric)
+    Collection->-Collection: CreateBuckets()
+else Exists?
+    MetricsCollector->+Collection: Update(metric)
+    Collection->-Collection: UpdateBuckets()
+end
+Metrics-->-Metrics: return
+
+loop on timer
+    Collection->Scraper: Scrape()
+    Collection->Collection: Record()
+end
+
