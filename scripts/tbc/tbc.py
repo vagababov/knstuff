@@ -53,6 +53,7 @@ def main(argv):
     step = 1
 
   ts = np.arange(min_t, max_t+step, step)
+  zero = np.arange(0, 0, step)
   # #pods = ceil(traffic / (target * tu))
   num_pods = (ts/int(ceil((FLAGS.target*FLAGS.target_utilization)))).astype(int)
 
@@ -62,6 +63,7 @@ def main(argv):
 
   util_cap = total_cap*FLAGS.target_utilization
   fig, graphs = plt.subplots(4)
+  fig.suptitle('Knative Revision Load Characteristics')
   graphs[0].set_title('Number of Pods vs Traffic')
   graphs[0].set_ylabel('Num Pods')
   graphs[0].step(ts, num_pods, where='post', label='Num Pods')
@@ -80,6 +82,7 @@ def main(argv):
   graphs[2].set_title('Available vs Excess Capacity')
   graphs[2].step(ts, exc_cap, where='post', label='Excess Capacity')
   graphs[2].step(ts, avl_cap, where='post', label='Available Capacity')
+  graphs[2].plot(ts, ts-ts, linewidth=1)
 
   # if excess capacity is positive, proxy is not enabled.
   proxy = -exc_cap / np.absolute(exc_cap)
@@ -90,6 +93,7 @@ def main(argv):
     g.legend()
     g.grid(True)
     g.set_xlabel('Concurrent Requests')
+    g.set_xlim([ts.min(), ts.max()])
   plt.show()
 
 if __name__ == '__main__':
