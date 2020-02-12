@@ -7,6 +7,8 @@ To model load with default values:
   * python3 tbc.py 
 To model with lots of params:
   * python3 tbc.py --target_utilization=0.75 --max_traffic=2000 -target=400 --step_count=400
+
+Requirements: abls, mathplotlib, numpy.
 """
 
 
