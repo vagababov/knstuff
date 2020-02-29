@@ -63,13 +63,20 @@ def capacities(cc, target, tu, tbc):
 def plot_imprecise(max_t):
   nump = np.arange(1, max_t+1, 1)
   total = nump*FLAGS.target
+
+  target_cap = nump*FLAGS.target*FLAGS.target_utilization
+  min_load = np.roll(target_cap, 1)
+  min_load[0] = 0
+  max_load = target_cap - 1
+
+  print("max_load:", max_load)
+  print("min_load:", min_load)
   caps = (
           total,
-          nump*FLAGS.target*FLAGS.target_utilization,
-          total*(1-FLAGS.target_utilization),
-          total*(1-FLAGS.target_utilization)-FLAGS.target+1)
+          target_cap,
+          total-min_load,
+          total-max_load)
           
-  print(caps[2])
   plt.subplot(1, 2, 1)
   plt.plot(nump, caps[0], label='Total')
   plt.plot(nump, caps[1], label='Target')
