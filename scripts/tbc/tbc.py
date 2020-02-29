@@ -57,7 +57,7 @@ def main(argv):
   ts = np.arange(min_t, max_t+step, step)
   zero = np.arange(0, 0, step)
   # #pods = ceil(traffic / (target * tu))
-  num_pods = (ts/int(ceil((FLAGS.target*FLAGS.target_utilization)))).astype(int)
+  num_pods = np.ceil(ts/(FLAGS.target*FLAGS.target_utilization)).astype(int)
 
   # total capacity is #pods*target
   total_cap = num_pods*FLAGS.target
@@ -71,9 +71,9 @@ def main(argv):
   graphs[0].step(ts, num_pods, where='post', label='Num Pods')
 
   graphs[1].set_ylabel('Requests')
-  graphs[1].set_title('Effective vs Total Capacity')
+  graphs[1].set_title('Target Capacity vs Total Capacity')
   graphs[1].step(ts, total_cap, where='post', label='Total Capacity')
-  graphs[1].step(ts, util_cap, where='post', label='Effective Capacity')
+  graphs[1].step(ts, util_cap, where='post', label='Target Capacity')
 
 
   # available capacity is difference between total capacity and traffic.
@@ -81,10 +81,10 @@ def main(argv):
   # excess capacity is available capacity minus tbc.
   exc_cap = avl_cap-FLAGS.tbc
   graphs[2].set_ylabel('Requests')
-  graphs[2].set_title('Available vs Excess Capacity')
+  graphs[2].set_title('Available vs Excess Burst Capacity')
+  graphs[2].plot(ts, ts-ts, 'ro', linewidth=1.5)
   graphs[2].step(ts, exc_cap, where='post', label='Excess Capacity')
   graphs[2].step(ts, avl_cap, where='post', label='Available Capacity')
-  graphs[2].plot(ts, ts-ts, linewidth=1)
 
   # if excess capacity is positive, proxy is not enabled.
   proxy = -exc_cap / np.absolute(exc_cap)
